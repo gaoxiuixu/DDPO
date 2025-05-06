@@ -4,17 +4,16 @@ import random
 from sklearn.utils import shuffle
 
 # Load data
-data_path = r"C:\Users\wmqgxx\Desktop\上市企业数据集\5.特征选择后的数据集\train_t_3_selected.xlsx"
+data_path = r"C:\Users\wmqgxx\Desktop\train_data.xlsx"
 data = pd.read_excel(data_path, engine='openpyxl')
 
 # Load feature weight data
-weight_path = r"C:\Users\wmqgxx\Desktop\上市企业数据集\4_特征选择\回归系数表格\时间窗口_t3_回归系数.xlsx"
+weight_path = r"C:\Users\wmqgxx\Desktop\wights.xlsx"
 weight_data = pd.read_excel(weight_path, engine='openpyxl')
 
 # Extract weights
-weights = weight_data.iloc[:, 3].values
-w = weight_data.iloc[:, 4].values
-
+weights = weight_data["wights"]
+w = weights + 1
 # Split features and labels
 X = data.drop(columns=['Default Status'])
 y = data['Default Status']
@@ -35,7 +34,10 @@ distances = D_w[np.triu_indices(D_w.shape[0], k=1)]
 distances_sorted = np.sort(distances)
 
 # Define neighborhood radius
-c = 0.5
+c = 0.95
+#This is an empirical value, 
+# but in practice it is determined by traversing values in the range (0, 1)， 
+#with a step size of 0.5 and selecting the one that yields the highest AUC when combined with the classifier.
 threshold_index = int(c * len(distances_sorted))
 r = distances_sorted[threshold_index]
 
